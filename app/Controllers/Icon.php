@@ -17,6 +17,6 @@ class Icon extends BaseController
         ];
 
 
-        return view('pages/icon/index',compact('data'));
+        return view('pages/icon/index',$data);
     }
 }

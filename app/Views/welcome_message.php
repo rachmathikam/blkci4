@@ -1,30 +1,39 @@
-<input type="file" id="imageInput" accept="image/*">
-<button id="submitBtn">Submit</button>
-<div id="message"></div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Display Old Value for File Input</title>
+</head>
+<body>
+    <label for="file-input">Select a file:</label>
+    <input type="file" id="file-input" />
+    <p id="selected-file-name">No file selected</p>
+    <button id="reset-btn">Reset</button>
+    <script src="your-javascript-file.js"></script>
+</body>
+</html>
 
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function() {
-  $('#submitBtn').on('click', function() {
-    var fileInput = $('#imageInput');
-    var file = fileInput[0].files[0];
+  document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("file-input");
+    const selectedFileNameElement = document.getElementById("selected-file-name");
+    const resetBtn = document.getElementById("reset-btn");
 
-    if (file) {
-      var fileName = file.name;
-      var fileExtension = fileName.split('.').pop().toLowerCase();
+    // Add an event listener to the file input element
+    fileInput.addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            selectedFileNameElement.textContent = file.name;
+        } else {
+            selectedFileNameElement.textContent = "No file selected";
+        }
+    });
 
-      var allowedExtensions = ['jpeg', 'jpg', 'png', 'gif'];
-      if ($.inArray(fileExtension, allowedExtensions) === -1) {
-        $('#message').text('Please select a valid image file (JPEG, JPG, PNG, or GIF).');
-        fileInput.val(''); // Reset file input to clear invalid selection
-      } else {
-        $('#message').text('File is valid. You can proceed with the submission.');
-        // Proceed with submission or other actions
-      }
-    } else {
-      $('#message').text('Please select an image file.');
-    }
-  });
+    // Add an event listener to the reset button
+    resetBtn.addEventListener("click", function () {
+        // Clear the file input value
+        fileInput.value = "";
+        selectedFileNameElement.textContent = "No file selected";
+    });
 });
+
 </script>

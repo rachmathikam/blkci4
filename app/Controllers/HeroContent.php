@@ -10,6 +10,11 @@ use CodeIgniter\API\ResponseTrait;
 class HeroContent extends BaseController
 {
     use ResponseTrait;
+    public function __construct()
+    {
+        // Load the Form Validation library
+        $this->validation = \Config\Services::validation();
+    }
 
     public function index()
     {
@@ -22,13 +27,13 @@ class HeroContent extends BaseController
         // data pertama kontak
         $model = new KontakModel();
         $firstDataKontak = $model->first();
-
         //data pertama 
         $model = new HeroContentModel();
         $firstDataHeroContent = $model->first();
+        // dd($firstDataHeroContent['background']);
         
         
-        if(!is_null($firstDataKontak)){
+        if(!is_null($firstDataHeroContent) OR !is_null($firstDataHeroContent)){
             $data = [
                 'title' => 'BLK - Hero Content',
                 'content_title' => 'Hero Content',
@@ -36,7 +41,8 @@ class HeroContent extends BaseController
                 'name' => session()->get('name'),
                 'validation' => \Config\Services::validation(),
                 'result' => $result,
-                'data_kontak' => $firstDataKontak
+                'data_kontak' => $firstDataKontak,
+                'data_profile' =>$firstDataHeroContent
             ];
         }else{
             $data = [
@@ -96,22 +102,118 @@ public function storeKontak()
 
 
   public function storeHeroContent()
+{       
+        $validation = \Config\Services::validation();
+        if($this->request->getVar('create') == true){      
+            $validation->setRules([
+                'title_pertama' => 'required',
+                'title_kedua' => 'required',
+                'title_ketiga' => 'required',
+                'deskripsi' => 'required',
+                'background' => [
+                    'rules' => 'uploaded[background]|max_size[background,1024]|is_image[background]|mime_in[background,image/jpg,image/jpeg,image/jpeg,image/png]',
+                    'errors' => [
+                        'uploaded' => 'Gambar tidak boleh kosong !',
+                        'max_size' => 'Maaf ukuran gambar terlalu besar !',
+                        'is_image' => 'Maaf yang anda pilih bukan gambar !',
+                        'mine_in'  => 'Maaf yang anda pilih bukan gambar !',
+                    ],
+                ],
+            ]);
+        }else{
+            $validation->setRules([
+                'title_pertama' => 'required',
+                'title_kedua' => 'required',
+                'title_ketiga' => 'required',
+                'deskripsi' => 'required',
+                'background' => [
+                    'rules' => 'max_size[background,1024]|is_image[background]|mime_in[background,image/jpg,image/jpeg,image/jpeg,image/png]',
+                    'errors' => [
+                        'max_size' => 'Maaf ukuran gambar terlalu besar !',
+                        'is_image' => 'Maaf yang anda pilih bukan gambar !',
+                        'mine_in'  => 'Maaf yang anda pilih bukan gambar !',
+                    ],
+                ],
+            ]);
+        }
+        
+       
+   
+        $file = $this->request->getFile('background');
+        $nama_file = $file->getName();
+        
+
+       if ($validation->withRequest($this->request)->run()) {
+         $model = new HeroContentModel();
+         
+         $data = array(
+             '1st_title' => $this->request->getVar('title_pertama'),	
+             '2nd_title' => $this->request->getVar('title_kedua'),	
+             '3rd_title' => $this->request->getVar('title_ketiga'),	
+             'deskripsi' => $this->request->getVar('deskripsi'),	
+             'background' => $nama_file,	
+             'user_id' => $this->request->getVar('user_id')
+            );
+
+        if($this->request->getVar('create') != null){
+            if ($model->insert($data)) {
+              $file->move('img/profile');
+                return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di tambah']);
+            } else {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Data gagal di tambah']);
+            }
+        }else{
+            if($file->getError() == 4){
+                $nama_file = $this->request->getVar('old_background');
+            }else{
+                $nama_file = $file->getName();
+                 $file->move('img/profile');
+                unlink('img/profile/' . $this->request->getVar('old_background'));
+            }
+                $nama = $nama_file;
+            $data = array(
+                '1st_title' => $this->request->getVar('title_pertama'),	
+                '2nd_title' => $this->request->getVar('title_kedua'),	
+                '3rd_title' => $this->request->getVar('title_ketiga'),	
+                'deskripsi' => $this->request->getVar('deskripsi'),	
+                'background' => $nama,	
+                'user_id' => $this->request->getVar('user_id')
+               );
+             
+            $model = new HeroContentModel();
+            $id = $this->request->getVar('id');
+            
+            if ($model->update($id,$data)) {
+                return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di update']);
+            } else {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Data gagal di update']);
+            }
+        }
+    } else {
+        
+        return $this->response->setJSON(['status' => 'error', 'errors' => $validation->getErrors('background')]);
+    }
+
+    
+  }
+
+  public function storeSocialMedia()
 {
     
         $validation = \Config\Services::validation();
         $validation->setRules([
-            '1st_title' => 'required',
-            '1nd_title' => 'required',
-            '3rd_title' => 'required',
-            'deskripsi' => 'required'
+            'title_pertama' => 'required',
+            'title_kedua' => 'required',
+            'title_ketiga' => 'required',
+            'deskripsi' => 'required',
         ]);
        
        if ($validation->withRequest($this->request)->run()) {
          $model = new HeroContentModel();
          $data = array(
-            '1st_title' => $this->request->getVar('1st_title'),	
-            '1nd_title' => $this->request->getVar('1nd_title'),	
-            '3rd_title' => $this->request->getVar('3rd_title'),	
+            '1st_title' => $this->request->getVar('title_pertama'),	
+            '1nd_title' => $this->request->getVar('title_kedua'),	
+            '3rd_title' => $this->request->getVar('title_ketiga'),	
             'deskripsi' => $this->request->getVar('deskripsi'),	
             'user_id' => $this->request->getVar('user_id')
         );

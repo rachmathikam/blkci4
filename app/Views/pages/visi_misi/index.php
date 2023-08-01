@@ -1,6 +1,10 @@
 <?= $this->extend('layout/template'); ?>
-
 <?= $this->section('content'); ?>
+<style>
+   .editInput{
+		height:36px; background-color:#f6f6f6; border:1px; border-radius:5px; display:none; width:100%;
+	}
+</style>
 <div class="container">
     <div class="col">
         <div class="row">
@@ -11,7 +15,7 @@
 <div class="container">
     <div class="page-inner">
         <div class="page-header">
-            <h4 class="page-title"><?php echo $data['content_title']?></h4>
+            <h4 class="page-title"><?php echo $content_title ?></h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
                     <a href="#">
@@ -22,18 +26,16 @@
                     <i class="flaticon-right-arrow"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#"><?php echo $data['content_title']?></a>
+                    <a href="#"><?php echo $content_title ?></a>
                 </li>
             </ul>
         </div>
         <div class="container">
             <div class="card">
                 <div class="card-body">
-                    <h3>Icon</h3>
-                    <button class="btn btn-primary btn-sm float-right" data-toggle="modal"
-                        data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Icon</button>
+                    <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah  visi misi</button>
                     <button class="btn btn-danger btn-sm float-right mr-1"><i class="fas fa-trash"></i> Tambah
-                        Icon</button>
+                        visi misi</button>
                     <div class="card-body mt-5">
                         <div class="table-responsive">
                             <table id="basic-datatables" class="display table table-hover">
@@ -47,10 +49,25 @@
                                 </thead>
                                 <tbody id="add_new">
 
-                                    <tr id="data">
-                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value=""></td>
-                                        <td></td>
-                                        <td></td>
+                                    <?php foreach($data as $visi_misi): ?>
+                                    <tr id="data<?= $visi_misi->id?>">
+                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value="<?= $visi_misi->id?>"></td>
+                                        <td>
+                                            <span class="editSpan kategori"><?= $visi_misi->kategori?></span>
+                                            <?php if($check == null){ ?>
+                                                   <?php $disabled = 'disabled'; ?>
+                                                        <select name="" id="" class="editInput kategori">
+                                                            <option selected value="visi">visi</option>
+                                                            <option value="">misi</option>
+                                                        </select>
+                                            <?php }else if($check != null) { ?>
+                                                       <input type="text" class="editInput Kategori" disabled value="<?= $visi_misi->kategori?>">
+                                            <?php } ?>
+                                        </td>
+                                        <td>
+                                            <span class="editSpan deskripsi"><?= $visi_misi->deskripsi?></span>
+                                            <input type="text" class="editInput deskripsi" name="deskripsi" value="<?= $visi_misi->deskripsi?>">
+                                        </td>
                                         <td>
                                             <button class="btn text-warning  edit_inline"><i
                                                     class="fa fa-edit"></i></button>
@@ -60,6 +77,7 @@
                                                     class="fa fa-times"></i></button>
                                         </td>
                                     </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -71,7 +89,7 @@
 </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Tambah Visi atau Misi</h5>
@@ -81,16 +99,30 @@
             </div>
             <div class="modal-body">
                 <form class="row" enctype='multipart/form-data' id="modal_form">
-                    <div id="option1Content" class="form-group col-sm-12 hidden">
-                        <label for="">Visi</label>
-                        <textarea name="visi" id="" class="form-control" rows="3"></textarea>
+                    <div class="col-md-12">
+                        <label for="">Pilih Kategori</label>
+                    <select name="" id="mySelect" class="form-control ">
+                         <option selected disabled>-- Pilih Kategori --</option>
+                        <option value="option1Content">Visi</option>
+                        <option value="option2Content">Misi</option>
+                    </select>
                     </div>
-                    <div id="option2Content" class="form-group col-md-12 hidden">
+                    <div id="option1Content" class="form-group col-sm-12 hidden" style="display:none;">
+                        <label for="">Visi</label>
+                        <?php if(!empty($check)){?>
+                        <input type="hidden" name="update_visi" value="<?php if(!empty($check)){ echo $check['id']; }?>">
+                        <?php } ?>
+                        <textarea name="visi" class="form-control mb-1" rows="3"><?php if(!empty($check)){ echo $check['deskripsi']; }  ?></textarea>
+                        <small style="font-size:12px;">Visi hanya bisa di inputkan 1 kali, jika data visi sudah ada maka akan mengupdate data visi jika di pilih !</small>
+                    </div>
+                    <div id="option2Content" class="form-group col-md-12 hidden"  style="display:none;">
                         <label for="">Misi</label>
+                        <br>
+                        <small style="font-size:12px;">Tambah data misi sesuai dengan kebutuhan !</small>
                         <div id="inputContainer">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="misi[]" placeholder="Enter a value">
+                                    <input type="text" class="form-control" name="misi[]" placeholder="Masukkan deskripsi misi">
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-danger remove-input" disabled><i
                                                 class="fas fa-times"></i></button>
@@ -175,13 +207,13 @@
         var trObj = $(this).closest("tr");
         var ID = $(this).closest("tr").attr('id');
         var inputData = $(this).closest("tr").find(".editInput").serialize();
-
+        var url = '<?= base_url(); ?>';
 
         $.ajax({
             type: "POST",
-            url: "http://localhost/blk/setting_profile/fetch.php",
+            url: url+"visi_misi_edit",
             dataType: "json",
-            data: 'action=edit&id=' + ID + '&' + inputData + '&' + 'user_id=<?php echo $data['id_user']?>',
+            data: 'action=edit&id=' + ID + '&' + inputData + '&' + 'user_id=<?php echo $id_user?>',
             success: function (response) {
                 if (response.status == 200) {
                     toastr.success(response.message);
@@ -209,12 +241,9 @@
 
     $(document).ready(function () {
         $('#mySelect').change(function () {
-            var selectedValue = $(this).val();
-            // Hide all content divs
-            $('[id$="Content"]').addClass('hidden');
+            $('.hidden').hide();
+            $('#' + $(this).val()).show();
 
-            // Show the content div based on selected value
-            $('#' + selectedValue + 'Content').removeClass('hidden');
         });
     });
 

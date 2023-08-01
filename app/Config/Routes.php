@@ -36,8 +36,11 @@ $routes->get('logout', 'Login::logout');
 $routes->add('/home', 'Home::index',['filter' => 'authGuard']);
 $routes->get('/dashboard', 'Dashboard::index',['filter' => 'authGuard']);
 
-// contact 
-$routes->post('/hero_store', 'HeroContent::storeKontak',['filter' => 'authGuard']);
+// base Setting  
+$routes->post('/hero_contact', 'HeroContent::storeKontak',['filter' => 'authGuard']);
+$routes->post('/hero_profile', 'HeroContent::storeHeroContent',['filter' => 'authGuard']);
+$routes->post('/hero_media', 'HeroContent::storeSocialMedia',['filter' => 'authGuard']);
+
 $routes->get('/hero_content', 'HeroContent::index',['filter' => 'authGuard']);
 
 //icon
@@ -45,6 +48,7 @@ $routes->get('/icon', 'Icon::index',['filter' => 'authGuard']);
 
 // visi misi
 $routes->get('/visi_misi', 'VisiMisi::index',['filter' => 'authGuard']);
+$routes->post('/visi_misi_edit', 'VisiMisi::edit',['filter' => 'authGuard']);
 
 //kerjasama
 $routes->get('/kerja_sama', 'KerjaSama::index',['filter' => 'authGuard']);
