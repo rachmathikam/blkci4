@@ -107,43 +107,71 @@ input::-webkit-inner-spin-button {
                 <div class="col-md-8 " id="content2"  style="display:none;">
                     <div class="card">
                         <div class="card-body">
-                            <form id="form_profile">
+                            <form id="form_profile" enctype='multipart/form-data'>
                                 <h3>Profile</h3>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="">Title Pertama</label>
-                                            <input type="text"  name="title_pertama" id="1st_title" class="form-control">
+                                            <input type="text"  name="title_pertama" id="title_pertama" class="form-control" value="<?php if(!empty($data_profile['1st_title'])){ echo $data_profile['1st_title']; }?>">
+                                             <input type="hidden" class="txt_csrfname" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
+                                            <input type="hidden" class="user_id" name="user_id" value="<?= $id_user ?>" />
+                                            <input type="hidden" name="id"  value="<?php if(!empty($data_profile['id'])){ echo $data_profile['id']; }?>" />
+                                           
+                                            <?php if(!empty($data_profile)){?>
+                                            <input type="hidden" id="update" name="update" value="update" />
+                                            <?php }else{?>
+                                                <input type="hidden" id="create" name="create" value="create" />
+                                            <?php }?>
+                                            
+                                            <?php if(!empty($data_profile)){?>
+                                            <input type="hidden" id="update" name="old_background" value="<?= $data_profile['background']?>" />
+                                            <?php }?>
+                                            
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="">Title kedua</label>
-                                            <input type="text"  name="title_kedua" class="form-control">
+                                            <input type="text"  name="title_kedua" id="title_kedua" class="form-control"  value="<?php if(!empty($data_profile['2nd_title'])){ echo $data_profile['2nd_title']; }?>">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="">Title ketiga</label>
-                                            <input type="text" name="title_ketiga"  class="form-control">
+                                            <input type="text" name="title_ketiga" id="title_ketiga"  class="form-control" value="<?php if(!empty($data_profile['3rd_title'])){ echo $data_profile['3rd_title']; }?>">
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label for="">deskripsi</label>
-                                            <textarea id="deskripsi" rows="3" name="deskripsi" class="form-control"></textarea>
+                                            <textarea id="deskripsi" rows="3" name="deskripsi" id="deskripsi" class="form-control"><?php if(!empty($data_profile['deskripsi'])){ echo $data_profile['deskripsi']; }?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="">Background</label>
-                                            <br>
-                                            <input type="file" name="background" id="imageInput" onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])">
-                                            <img src="https://previews.123rf.com/images/aquir/aquir1411/aquir141100300/33838205-example-blue-square-stamp-isolated-on-white-background.jpg" id="blah" alt="your image" width="100"  />
+                                        <div class="form-group row">
+                                            <div class="col-md-8">
+                                                <label for="Background">Background</label>
+                                                <input type="file" name="background" id="background" class="form-control background" onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])">
+                                                <div class="invalid-feedback" style="display:block">
+                                                   
+                                                </div>
+                                             </div>
+                                            <div class="col-md-4">
+                                            <?php if(!empty($data_profile)){?>
+                                                <img src="/img/profile/<?=$data_profile['background'] ?>" id="blah" alt="your image" width="100" />
+                                            <?php }else{?>
+                                                <img src="https://previews.123rf.com/images/aquir/aquir1411/aquir141100300/33838205-example-blue-square-stamp-isolated-on-white-background.jpg" id="blah" alt="your image" width="100" />
+                                            <?php }?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" type="submit" id="submitBtn" style="float:right">Simpan</button>
+                                <?php if(!empty($data_profile)){?>
+                                <button class="btn btn-warning float-right" type="submit">Update</button>
+                                <?php }else{?>
+                                <button class="btn btn-primary float-right" type="submit">Simpan</button>
+                                <?php }?>
                             </form>
                         </div>
                     </div>
@@ -241,14 +269,14 @@ input::-webkit-inner-spin-button {
 <?= $this->endSection(); ?>
 
 <?= $this->section('js'); ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <!-- Bootstrap JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- jQuery Validation plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <!-- jQuery Validation plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+        
     <script>  
 
 
@@ -326,7 +354,7 @@ $(document).ready(function() {
         var data = $('#create').val();
         if (data != '') {
             $.ajax({
-                    url: url+'hero_store/', 
+                    url: url+'hero_contact/', 
                     method: 'POST',
                     data: $('#registrationForm').serialize(),
                     dataType: 'json',
@@ -393,7 +421,6 @@ $(document).ready(function() {
         deskripsi: {
           required: true,
         
-
         },
       },
       messages: {
@@ -410,7 +437,7 @@ $(document).ready(function() {
         },
         deskripsi: {
           required: "Masukkan deskripsi !"
-        }
+        },
       },
       errorElement: "div",
       errorPlacement: function(error, element) {
@@ -425,29 +452,40 @@ $(document).ready(function() {
       },
       submitHandler: function(form) {
         var url = '<?= base_url(); ?>';
-        var data = $('#create').val();
-        if (data != '') {
+        var formData = new FormData(form);
             $.ajax({
-                    url: url+'hero_store/', 
-                    method: 'POST',
-                    data: $('#registrationForm').serialize(),
-                    dataType: 'json',
+                    url:url+'hero_profile/', // Replace with your actual URL
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
+                        
                         if (response.status === 'success') {
                             swal(response.message, {
                                 icon : "success",
                                 buttons:false,
                                 timer: 1500,
                             }); 
-                            
+
                             setTimeout(function(){
                                 location = url +'hero_content';
                             },1500)
                             
                         } else if (response.status === 'error') {
-                            toastr.error('Error: ' + response.message);
+                            $.notify({
+                                // options
+                                icon: 'flaticon-lock-1',
+                                title: 'Error',
+                                message: response.errors.background,
+                                target: '_blank'
+                            });
+                            $(".background").addClass('is-invalid');
+                            var text = document.querySelector(".invalid-feedback");
+                            text.textContent  = response.errors.background;
+                            console.log(text.textContent);
                         } else if (response.status === 'error') {
-                            toastr.error('Validation Error:', response.errors);
+                            toastr.error('Validation Error:', response.errors.background);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -455,43 +493,27 @@ $(document).ready(function() {
                        
                     }
                 });
-        }
-      }
+             }
     });
-        $('#email').on('click', function() {
-            $('#email').removeClass('is-valid is-invalid');
+        $('#title_pertama').on('click', function() {
+            $('#title_pertama').removeClass('is-valid is-invalid');
         });
-        $('#phone_number').on('click', function() {
-            $('#phone_number').removeClass('is-valid is-invalid');
+        $('#title_kedua').on('click', function() {
+            $('#title_kedua').removeClass('is-valid is-invalid');
         });
-        $('#lokasi').on('click', function() {
-            $('#lokasi').removeClass('is-valid is-invalid');
+        $('#title_ketiga').on('click', function() {
+            $('#title_ketiga').removeClass('is-valid is-invalid');
         });
+        $('#deskripsi').on('click', function() {
+            $('#deskripsi').removeClass('is-valid is-invalid');
+        });
+
 
         $('select').on('change', function() {
             $('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
         });
 
-    $('#submitBtn').on('click', function() {
-    var fileInput = $('#imageInput');
-    var file = fileInput[0].files[0];
-
-    if (file) {
-      var fileName = file.name;
-      var fileExtension = fileName.split('.').pop().toLowerCase();
-
-      var allowedExtensions = ['jpeg', 'jpg', 'png', 'gif'];
-      if ($.inArray(fileExtension, allowedExtensions) === -1) {
-        $('#message').text('Please select a valid image file (JPEG, JPG, PNG, or GIF).');
-        fileInput.val(''); // Reset file input to clear invalid selection
-      } else {
-        $('#message').text('File is valid. You can proceed with the submission.');
-        // Proceed with submission or other actions
-      }
-    } else {
-      $('#message').text('Please select an image file.');
-    }
-  });
+  
     });
 
   

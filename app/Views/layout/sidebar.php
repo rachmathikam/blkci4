@@ -68,6 +68,12 @@
                 </a>
 			</li>
             <li class="nav-item">
+                <a href="<?= base_url('/pejabat')?>">
+                    <i class="fas fa-users"></i>
+                    <p>Pejabat</p>
+                </a>
+			</li>
+            <li class="nav-item">
                 <a href="<?= base_url('/kerja_sama')?>">
                     <i class="fas fa-handshake"></i>
                     <p>Kerjasama Mitra</p>

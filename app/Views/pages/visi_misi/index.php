@@ -1,6 +1,10 @@
 <?= $this->extend('layout/template'); ?>
-
 <?= $this->section('content'); ?>
+<style>
+   .editInput{
+		height:36px; background-color:#f6f6f6; border:1px; border-radius:5px; display:none; width:100%;
+	}
+</style>
 <div class="container">
     <div class="col">
         <div class="row">
@@ -11,7 +15,7 @@
 <div class="container">
     <div class="page-inner">
         <div class="page-header">
-            <h4 class="page-title"><?php echo $data['content_title']?></h4>
+            <h4 class="page-title"><?php echo $content_title ?></h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
                     <a href="#">
@@ -22,18 +26,15 @@
                     <i class="flaticon-right-arrow"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#"><?php echo $data['content_title']?></a>
+                    <a href="#"><?php echo $content_title ?></a>
                 </li>
             </ul>
         </div>
         <div class="container">
             <div class="card">
                 <div class="card-body">
-                    <h3>Icon</h3>
-                    <button class="btn btn-primary btn-sm float-right" data-toggle="modal"
-                        data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Icon</button>
-                    <button class="btn btn-danger btn-sm float-right mr-1"><i class="fas fa-trash"></i> Tambah
-                        Icon</button>
+                    <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah  visi misi</button>
+                    <button class="btn btn-danger btn-sm float-right mr-1 deleteData"><i class="fas fa-trash"></i> Hapus Data terpilih</button>
                     <div class="card-body mt-5">
                         <div class="table-responsive">
                             <table id="basic-datatables" class="display table table-hover">
@@ -46,11 +47,25 @@
                                     </tr>
                                 </thead>
                                 <tbody id="add_new">
-
-                                    <tr id="data">
-                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value=""></td>
-                                        <td></td>
-                                        <td></td>
+                                    <?php foreach($data as $visi_misi): ?>
+                                    <tr id="data<?= $visi_misi->id?>">
+                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value="<?= $visi_misi->id?>"></td>
+                                        <td class="kategori_only">
+                                            <span class="editSpan kategori"><?= $visi_misi->kategori?></span>
+                                            <?php if($check == null){ ?>
+                                                   <?php $disabled = 'disabled'; ?>
+                                                        <select name="kategori" id="kategori" class="editInput kategori">
+                                                            <option selected value="visi">visi</option>
+                                                            <option value="misi">misi</option>
+                                                        </select>
+                                            <?php }else if($check != null) { ?>
+                                                       <input type="text" name="kategori" class="editInput Kategori" readonly value="<?= $visi_misi->kategori?>">
+                                            <?php } ?>
+                                        </td>
+                                        <td>
+                                            <span class="editSpan deskripsi"><?= $visi_misi->deskripsi?></span>
+                                            <textarea class="editInput deskripsi" name="deskripsi" style="height:100px;"><?= $visi_misi->deskripsi?></textarea>
+                                        </td>
                                         <td>
                                             <button class="btn text-warning  edit_inline"><i
                                                     class="fa fa-edit"></i></button>
@@ -60,6 +75,7 @@
                                                     class="fa fa-times"></i></button>
                                         </td>
                                     </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -71,7 +87,7 @@
 </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Tambah Visi atau Misi</h5>
@@ -80,33 +96,48 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form class="row" enctype='multipart/form-data' id="modal_form">
-                    <div id="option1Content" class="form-group col-sm-12 hidden">
-                        <label for="">Visi</label>
-                        <textarea name="visi" id="" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div id="option2Content" class="form-group col-md-12 hidden">
-                        <label for="">Misi</label>
-                        <div id="inputContainer">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="misi[]" placeholder="Enter a value">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-danger remove-input" disabled><i
-                                                class="fas fa-times"></i></button>
-                                    </div>
+            <label for="">Pilih Kategori</label>
+                    <select name="" id="mySelect" class="form-control mb-3">
+                         <option selected disabled>-- Pilih Kategori --</option>
+                        <option value="option1Content">Visi</option>
+                        <option value="option2Content">Misi</option>
+                    </select>
+                    <div class="row">
+                        <div class="col-12 option1Content hidden" style="display:none;">
+                            <form id="form_visi">
+                                <input type="hidden" id="user_id" name="user_id" value="<?= $id_user?>">
+                                <?php if(!empty($check)){ ?>
+                                    <input type="hidden" id="update_id" name="update_id" value="<?= $check['id']?>">
+                                <?php }?>
+                                <textarea id="mytextarea"  name="visi"><?php if(!empty($check)){ echo $check['deskripsi'];}?></textarea>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-                        <button type="button" class="btn btn-primary btn-sm ml-2" onclick="addInput()">Add
-                            Input</button>
+                        <div class="col-12 option2Content hidden" style="display:none;">
+                            <form id="form_misi">
+                                    <div id="inputContainer">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <input type="hidden" id="user_id" name="user_id" value="<?= $id_user?>">
+                                                    <input type="text" class="form-control" name="misi[]" id="misi" placeholder="masukkan deskripsi misi..">
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-danger remove-input" disabled><i class="fas fa-times"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                     <button type="button" class="btn btn-primary btn-sm ml-2 mb-3" onclick="addInput()">Add Input</button>
+                                     <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                             </form>
+                        </div>
                     </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary add_user">Simpan</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                </form>
-            </div>
+             </div>
         </div>
     </div>
 </div>
@@ -126,23 +157,67 @@
 <?= $this->section('js'); ?>
 <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
     crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/krcamgkrexa4e46g2kn9h8x80o7prt3skd1rmvtv4dal06hh/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>    
+   tinymce.init({
+      selector: '#mytextarea',
+      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
+      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      tinycomments_mode: 'embedded',
+      tinycomments_author: 'Author name',
+      mergetags_list: [
+        { value: 'First.Name', title: 'First Name' },
+        { value: 'Email', title: 'Email' },
+      ],
+    });
 
-<script>
-    $("#form_profile").submit(function (e) {
+    $("#form_visi").submit(function (e) {
         e.preventDefault();
-        var formData = new FormData(this);
+        var formData = {
+           'user_id' : $("#user_id").val(),
+           'visi' : 'visi',
+           'deskripsi' : tinymce.get('mytextarea').getContent(),
+           'id' : $("#update_id").val(),
+        } 
         var url = '<?php echo base_url(); ?>';
 
         $.ajax({
             type: 'POST',
-            url: url + 'hero_store', // URL to the server-side script that handles file upload
+            url: url + 'visi_store', // URL to the server-side script that handles file upload
             data: formData,
-            processData: false, // Prevent jQuery from processing the data
-            contentType: false, // Prevent jQuery from setting the content type
             dataType: 'json', // Specify the expected response type
             success: function (response) {
+                if(response.status == 'success'){
+                        toastr.success(response.message);
+                        setTimeout(function () {
+                        location = url+'visi_misi';
+                    }, 1500)
+                }else{
+                    toastr.error('gagal menambahkan visi');
+                }
+            },
+        });
+    });
 
-
+    var url = '<?php echo base_url(); ?>';
+    $("#form_misi").submit(function (e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: url + 'misi_store', // URL to the server-side script that handles file upload
+            data: formData,
+            dataType: 'json', // Specify the expected response type
+            success: function (response) {
+                if(response.status == 'success'){
+                        toastr.success(response.message);
+                        setTimeout(function () {
+                        location = url+'visi_misi';
+                    }, 1500)
+                }else{
+                    toastr.error('gagal menambahkan misi');
+                }
             },
         });
     });
@@ -175,31 +250,31 @@
         var trObj = $(this).closest("tr");
         var ID = $(this).closest("tr").attr('id');
         var inputData = $(this).closest("tr").find(".editInput").serialize();
-
+        var url = '<?= base_url(); ?>';
 
         $.ajax({
             type: "POST",
-            url: "http://localhost/blk/setting_profile/fetch.php",
+            url: url+"visi_misi_edit",
             dataType: "json",
-            data: 'action=edit&id=' + ID + '&' + inputData + '&' + 'user_id=<?php echo $data['id_user']?>',
+            data: 'action=edit&id=' + ID + '&' + inputData + '&' + 'user_id=<?php echo $id_user?>',
             success: function (response) {
-                if (response.status == 200) {
+                if (response.status == 'success') {
                     toastr.success(response.message);
-                    trObj.find(".editSpan.social_media_name").text(response.data.social_media_name);
-                    trObj.find(".editSpan.icon_id").text(response.data.icon_id);
-                    trObj.find(".editSpan.link").text(response.data.link);
+                   
+                    trObj.find(".editSpan.kategori").text(response.data.kategori);
+                    trObj.find(".editSpan.deskripsi").text(response.data.deskripsi);
+                
 
-                    trObj.find(".editInput.social_media_name").val(response.data.social_media_name);
-                    trObj.find(".editInput.icon_id").val(response.data.icon_id);
-                    trObj.find(".editInput.link").val(response.data.link);
-
+                    trObj.find(".editInput.kategori").val(response.data.kategori);
+                    trObj.find(".editInput.deskripsi").val(response.data.deskripsi);
+                
                     trObj.find(".editInput").hide();
                     trObj.find(".editSpan").show();
                     trObj.find(".btnSave").hide();
                     trObj.find(".editCancel").hide();
                     trObj.find(".edit_inline").show();
                     setTimeout(function () {
-                        location = 'http://localhost/blk/setting_profile/setting.php';
+                        location = url+'visi_misi';
                     }, 1500)
                 }
             }
@@ -209,12 +284,9 @@
 
     $(document).ready(function () {
         $('#mySelect').change(function () {
-            var selectedValue = $(this).val();
-            // Hide all content divs
-            $('[id$="Content"]').addClass('hidden');
+            $('.hidden').hide();
+            $('.' + $(this).val()).show();
 
-            // Show the content div based on selected value
-            $('#' + selectedValue + 'Content').removeClass('hidden');
         });
     });
 
@@ -239,5 +311,63 @@
             inputGroup.parent().remove();
         }
     }
+
+ $("#select_all").click(function() {
+      $('.checkbox_ids').prop('checked', $(this).prop('checked'));
+ });
+
+$(document).on('click','.deleteData',function() {
+var all_ids = [];
+$('input:checkbox[name=ids]:checked').each(function() {
+    all_ids.push($(this).val());
+});
+
+const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: true
+});
+swalWithBootstrapButtons.fire({
+    title: 'Are you sure?',
+    text: "Do you want to delete ?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel!',
+    reverseButtons: true
+}).then((result) => {
+    if (result.value) {
+        if (result.isConfirmed) {
+          $.ajax({
+              url: url+"visi_misi_delete",
+              type: "POST",
+              data: {
+                  ids: all_ids,
+              },
+              success: function(response) {
+                toastr.success('behasil menghapus data');
+                $.each(all_ids, function(key, val) {
+                    var datas = $('#data' + val);
+                     datas.remove();
+                  })
+                  setTimeout(function () {
+                        location = url+'visi_misi';
+                    }, 1500)
+              }
+          });
+        }
+    } else if (
+        result.dismiss === Swal.DismissReason.cancel
+    ) {
+        swal.fire(
+            'Cancelled',
+            'Data is not deleted',
+            'error'
+        )
+    }
+});
+});
 </script>
 <?= $this->endSection(); ?>
