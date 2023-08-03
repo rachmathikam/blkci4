@@ -196,8 +196,8 @@ input::-webkit-inner-spin-button {
                                         </thead>
                                         <tbody id="add_new">
                                         <?php foreach($result->getResult() as $value): ?>
-                                             <tr id="data<?= $value->id_social_media; ?>">
-                                                <td><input type="checkbox"  class="checkbox_ids" name="ids" value="<?= $value->id_social_media; ?>"></td>
+                                             <tr id="data<?= $value->id; ?>">
+                                                <td><input type="checkbox"  class="checkbox_ids" name="ids" value="<?= $value->id; ?>"></td>
                                                 <td><?= $value->social_media_name; ?></td>
                                                 <td><i class="<?= $value->icon_name; ?>"></i></td>
                                                 <td><?= $value->link; ?></td>

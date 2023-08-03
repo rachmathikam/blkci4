@@ -20,7 +20,7 @@ class HeroContent extends BaseController
     {
         $db      = \Config\Database::connect();
         session();
-        $query = $db->table('social_media')->join('icon','icon.id_icon=social_media.icon_id');
+        $query = $db->table('social_media')->join('icon','icon.id=social_media.icon_id');
         $query->select('*');
         $result = $query->get();
 
