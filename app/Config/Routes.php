@@ -42,7 +42,9 @@ $routes->get('/hero_content', 'HeroContent::index',['filter' => 'authGuard']);
 
 //icon
 $routes->get('/icon', 'Icon::index',['filter' => 'authGuard']);
-
+$routes->post('/icon_store', 'Icon::store',['filter' => 'authGuard']);
+$routes->post('/icon_edit', 'Icon::edit',['filter' => 'authGuard']);
+$routes->post('/icon_delete', 'Icon::delete',['filter' => 'authGuard']);
 // visi misi
 $routes->get('/visi_misi', 'VisiMisi::index',['filter' => 'authGuard']);
 
