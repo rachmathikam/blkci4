@@ -11,7 +11,7 @@
 <div class="container">
     <div class="page-inner">
         <div class="page-header">
-            <h4 class="page-title"><?php echo $data['content_title']?></h4>
+            <h4 class="page-title"><?php echo $content_title ?></h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
                     <a href="#">
@@ -22,7 +22,7 @@
                     <i class="flaticon-right-arrow"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#"><?php echo $data['content_title']?></a>
+                    <a href="#"><?php echo $content_title ?></a>
                 </li>
             </ul>
         </div>
@@ -173,7 +173,7 @@ $("#add_new").on("click", '.btnSave',function(e) {
         type: "POST",
         url : "http://localhost/blk/setting_profile/fetch.php",
         dataType: "json",
-        data:'action=edit&id='+ID+'&'+inputData+'&'+'user_id=<?php echo $data['id_user']?>',
+        data:'action=edit&id='+ID+'&'+inputData+'&'+'user_id=<?php echo $id_user?>',
         success:function(response){
           if(response.status == 200){
             toastr.success(response.message);
