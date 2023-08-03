@@ -11,7 +11,7 @@
 <div class="container">
     <div class="page-inner">
         <div class="page-header">
-            <h4 class="page-title"><?php echo $data['content_title']?></h4>
+            <h4 class="page-title"><?php echo $content_title?></h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
                     <a href="#">
@@ -22,7 +22,7 @@
                     <i class="flaticon-right-arrow"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#"><?php echo $data['content_title']?></a>
+                    <a href="#"><?php echo $content_title?></a>
                 </li>
             </ul>
         </div>
@@ -32,7 +32,7 @@
                     <h3>Kegiatan Pelatihan</h3>
                     <button class="btn btn-primary btn-sm float-right" data-toggle="modal"
                         data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Kegiatan Pelatihan</button>
-                    <button class="btn btn-danger btn-sm float-right mr-1"><i class="fas fa-trash"></i> Hapus
+                    <button class="btn btn-danger btn-sm float-right mr-1 deleteData"><i class="fas fa-trash"></i> Hapus
                         Terpilih</button>
                     <div class="card-body mt-5">
                         <div class="table-responsive">
@@ -46,20 +46,16 @@
                                     </tr>
                                 </thead>
                                 <tbody id="add_new">
-
+                                <?php foreach($data as $x): ?>
                                     <tr id="data">
-                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value=""></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value="<?= $x->id?>"></td>
+                                        <td><?= $x->nama_pelatihan ?></td>
+                                        <td class="text-center"><img src="img/kegiatan_pelatihan/<?= $x->gambar ?>" alt="" width="100"></td>
                                         <td>
-                                            <button class="btn text-warning  edit_inline"><i
-                                                    class="fa fa-edit"></i></button>
-                                            <button class="btn text-primary  btnSave" style="display:none;"><i
-                                                    class="fa fa-check"></i></button>
-                                            <button class="btn text-danger  editCancel" style="display:none;"><i
-                                                    class="fa fa-times"></i></button>
+                                            <a href="<?= base_url()?>kegiatan_pelatihan_edit/<?=$x->id?>" class="btn text-warning  edit_inline"><i class="fa fa-edit"></i></a>
                                         </td>
                                     </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -74,7 +70,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Visi atau Misi</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Kegiatan Pelatihan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -83,12 +79,11 @@
             <form  class="row" enctype='multipart/form-data' id="modal_form">
                     <div class="form-group col-sm-12">
                         <label for="kategori">Nama Pelatihan</label>
-                        <input type="hidden" name="user_id" value="<?php  ?>">
-                        <input type="hidden" name="submit" value="submit">
+                        <input type="hidden" name="user_id" value="<?php echo $id_user?>">
                         <select name="kegiatan_pelatihan" id="" class="form-control">
-                                <option value="">Junior Web Programming</option>
-                                <option value="">Practical Office in Advance</option>
-
+                            <?php foreach($option as $d): ?>
+                                <option value="<?= $d['nama_pelatihan']; ?>"><?= $d['pelatihan']; ?></option>
+                                <?php endforeach; ?>
                         </select>
                     </div>
                     <div id="option2Content" class="form-group col-sm-12">
@@ -125,118 +120,96 @@
 <?= $this->section('js'); ?>
 <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
     crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <script>
-    $("#form_profile").submit(function (e) {
+    var url = '<?php echo base_url(); ?>';
+
+    $("#modal_form").submit(function (e) {
         e.preventDefault();
         var formData = new FormData(this);
         var url = '<?php echo base_url(); ?>';
 
         $.ajax({
             type: 'POST',
-            url: url + 'hero_store', // URL to the server-side script that handles file upload
+            url: url+'kegiatan_pelatihan_store', 
             data: formData,
-            processData: false, // Prevent jQuery from processing the data
-            contentType: false, // Prevent jQuery from setting the content type
-            dataType: 'json', // Specify the expected response type
+            processData: false,
+            contentType: false, 
+            dataType: 'json', 
             success: function (response) {
-
+                if(response.status == 'success') {
+                    toastr.success(response.message);
+                    setTimeout(function(){
+                                location = url +'kegiatan_pelatihan';
+                    },1500)
+                }else if(response.status == 'error_data'){
+                    toastr.error(response.errors);
+                }else if(response.status == 'error_length'){
+                    toastr.error(response.errors);
+                }else{
+                    toastr.error(response.errors.gambar);
+                }
 
             },
         });
     });
 
-    $("#add_new").on('click', '.edit_inline', function () {
-        var btn = $(this);
-        btn.closest("tr").find(".edit_inline").hide();
+$("#select_all").click(function() {
+    $('.checkbox_ids').prop('checked', $(this).prop('checked'));
+});
 
-        $(this).closest("tr").find(".editSpan").hide();
-        $(this).closest("tr").find(".editInput").show(250);
-        $(this).closest("tr").find(".editCancel").show(250);
-        $(this).closest("tr").find(".edit_inline").hide();
-        $(this).closest("tr").find(".btnSave").show(250);
-    });
+$(document).on('click','.deleteData',function() {
+var all_ids = [];
+$('input:checkbox[name=ids]:checked').each(function() {
+    all_ids.push($(this).val());
+});
 
-    $("#add_new").on('click', '.editCancel', function (e) {
-        e.preventDefault();
-
-        $(this).closest("tr").find(".editSpan").show();
-        $(this).closest("tr").find(".editInput").hide();
-
-        $(this).closest("tr").find(".edit_inline").show(250);
-        $(this).closest("tr").find(".editCancel").hide();
-
-        $(this).closest("tr").find(".btnSave").hide();
-    });
-
-    $("#add_new").on("click", '.btnSave', function (e) {
-        e.preventDefault();
-        var trObj = $(this).closest("tr");
-        var ID = $(this).closest("tr").attr('id');
-        var inputData = $(this).closest("tr").find(".editInput").serialize();
-
-
-        $.ajax({
-            type: "POST",
-            url: "http://localhost/blk/setting_profile/fetch.php",
-            dataType: "json",
-            data: 'action=edit&id=' + ID + '&' + inputData + '&' + 'user_id=<?php echo $data['id_user']?>',
-            success: function (response) {
-                if (response.status == 200) {
-                    toastr.success(response.message);
-                    trObj.find(".editSpan.social_media_name").text(response.data.social_media_name);
-                    trObj.find(".editSpan.icon_id").text(response.data.icon_id);
-                    trObj.find(".editSpan.link").text(response.data.link);
-
-                    trObj.find(".editInput.social_media_name").val(response.data.social_media_name);
-                    trObj.find(".editInput.icon_id").val(response.data.icon_id);
-                    trObj.find(".editInput.link").val(response.data.link);
-
-                    trObj.find(".editInput").hide();
-                    trObj.find(".editSpan").show();
-                    trObj.find(".btnSave").hide();
-                    trObj.find(".editCancel").hide();
-                    trObj.find(".edit_inline").show();
-                    setTimeout(function () {
-                        location = 'http://localhost/blk/setting_profile/setting.php';
+const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: true
+});
+swalWithBootstrapButtons.fire({
+    title: 'Are you sure?',
+    text: "Do you want to delete ?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel!',
+    reverseButtons: true
+}).then((result) => {
+    if (result.value) {
+        if (result.isConfirmed) {
+          $.ajax({
+              url: url+"kegiatan_pelatihan_delete",
+              type: "POST",
+              data: {
+                  ids: all_ids,
+              },
+              success: function(response) {
+                toastr.success('behasil menghapus data');
+                $.each(all_ids, function(key, val) {
+                    var datas = $('#data' + val);
+                     datas.remove();
+                  })
+                  setTimeout(function () {
+                        location = url+'kegiatan_pelatihan';
                     }, 1500)
-                }
-            }
-        });
-
-    });
-
-    $(document).ready(function () {
-        $('#mySelect').change(function () {
-            var selectedValue = $(this).val();
-            // Hide all content divs
-            $('[id$="Content"]').addClass('hidden');
-
-            // Show the content div based on selected value
-            $('#' + selectedValue + 'Content').removeClass('hidden');
-        });
-    });
-
-    function addInput() {
-        var html = '<div class="form-group">' +
-            '<div class="input-group">' +
-            '<input type="text" class="form-control" name="misi[]" placeholder="Enter a value">' +
-            '<div class="input-group-append">' +
-            '<button type="button" class="btn btn-danger remove-input" onclick="removeInput(this)"><i class="fas fa-times"></i></button>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
-        $('#inputContainer').append(html);
-    }
-
-    function removeInput(element) {
-        var inputGroup = $(element).closest('.input-group');
-        if (inputGroup.parent().is(':nth-child(1)')) {
-            // Prevent removing the first input
-            alert('Cannot remove the first input!');
-        } else {
-            inputGroup.parent().remove();
+              }
+          });
         }
+    } else if (
+        result.dismiss === Swal.DismissReason.cancel
+    ) {
+        swal.fire(
+            'Cancelled',
+            'Data is not deleted',
+            'error'
+        )
     }
+});
+});
 </script>
 <?= $this->endSection(); ?>

@@ -170,7 +170,7 @@ public function storeKontak()
                  $file->move('img/profile');
                 unlink('img/profile/' . $this->request->getVar('old_background'));
             }
-                $nama = $nama_file;
+            $nama = $nama_file;
             $data = array(
                 '1st_title' => $this->request->getVar('title_pertama'),	
                 '2nd_title' => $this->request->getVar('title_kedua'),	
@@ -234,7 +234,7 @@ public function storeKontak()
         }
     } else {
         // Send a validation error response
-        return $this->response->setJSON(['status' => 'error', 'errors' => $validation->getErrors()]);
+        return $this->response->setJSON(['status' => 'error', 'errors' => $validation->hasErros()]);
     }
 
     

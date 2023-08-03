@@ -1,45 +1,77 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\TestimoniModel;
-class Testimonial extends BaseController
+use App\Models\PejabatModel;
+class Pejabat extends BaseController
 {
     public function index()
     {
-      $model = new TestimoniModel();
-      $data_testimoni = $model->get()->getResult();
+      $model = new PejabatModel();
+      $jabatan = [
+        [
+            'jabatan' => 'Kepala UPT BLK Sumenep',
+        ],
+        [
+            'jabatan' => 'Kasubag Tata Usaha',
+        ],
+        [
+            'jabatan' => 'Kasi Pelatihan dan Sertifikasi',
+        ],
+        [
+            'jabatan' => 'Kasi Pengembangan dan Pemasaran',
+        ],
+      ];
+      $pejabat = [
+            [
+                'nama_pejabat' => 'BAHTIAR SANTOSO, S.Sos.,M.M'
+            ],
+            [
+                'nama_pejabat' => 'PARIJA, S.Sos'
+            ],
+            [
+                'nama_pejabat' => 'MARUB, SE., M.Si.'
+            ],
+            [
+                'nama_pejabat' => 'OCTANO WIHARTO, S.H'
+            ],
+        ];
+      $data_jabatan = $model->get()->getResult();
       $session = session();
       $datas = $session->get();
         $data = [
-          'title' => 'BLK - Testimonial',
-          'content_title' => 'Testimonial Pendaftar',
+          'title' => 'BLK - pejabat',
+          'content_title' => 'Pejabat',
           'name' => $datas['name'],
           'id_user' => $datas['id_user'],
-          'data' => $data_testimoni,
+          'data' => $data_jabatan,
+          'jabatan' => $jabatan,
+          'pejabat' => $pejabat,
         ];
-        return view('pages/testimonial/index',$data);
+        return view('pages/pejabat/index',$data);
     }
     public function store()
     {
-        $model = new TestimoniModel();
+        $model = new PejabatModel();
         $validation = \Config\Services::validation();
         $validation->setRules([
-          'nama_pendaftar' => [
-              'rules' => 'required',
+          'nama_pejabat' => [
+              'rules' => 'required|is_unique[pejabat.nama_pejabat]',
               'errors' => [
-                    'required' => 'Nama Pendaftar tidak boleh kosong !'
+                    'required' => 'Nama pejabat tidak boleh kosong !',
+                    'is_unique' => 'Pejabat yang anda pilih sudah ada !'
               ],
           ],
-          'testimoni' => [
-            'rules' => 'required',
+          'jabatan' => [
+            'rules' => 'required|is_unique[pejabat.jabatan]',
             'errors' => [
-                  'required' => 'testimoni tidak boleh kosong !'
+                  'required' => 'Jabatan tidak boleh kosong !',
+                  'is_unique' => 'Jabatan sudah terkait dengan nama pejabat sebelumnnya !',
             ],
            ],
-          'gambar_pendaftar' => [
-            'rules' => 'uploaded[gambar_pendaftar]|max_size[gambar_pendaftar,1024]|is_image[gambar_pendaftar]|mime_in[gambar_pendaftar,image/jpg,image/jpeg,image/jpeg,image/png]',
+          'gambar_pejabat' => [
+            'rules' => 'uploaded[gambar_pejabat]|max_size[gambar_pejabat,1024]|is_image[gambar_pejabat]|mime_in[gambar_pejabat,image/jpg,image/jpeg,image/jpeg,image/png]',
             'errors' => [
-                'uploaded' => 'Gambar Pendaftar tidak boleh kosong',
+                'uploaded' => 'Gambar pejabat tidak boleh kosong',
                 'max_size' => 'Maaf ukuran gambar terlalu besar !',
                 'is_image' => 'Maaf yang anda pilih bukan gambar !',
                 'mine_in'  => 'Maaf yang anda pilih bukan gambar !',
@@ -48,28 +80,28 @@ class Testimonial extends BaseController
         ]);
 
         $user_id = $this->request->getVar('user_id');
-        $nama_pendaftar = $this->request->getVar('nama_pendaftar');
-        $testimoni = $this->request->getVar('testimoni');
+        $nama_pejabat = $this->request->getVar('nama_pejabat');
+        $jabatan = $this->request->getVar('jabatan');
 
         if ($validation->withRequest($this->request)->run()) {
 
             $user_id = $this->request->getVar('user_id');
-            $nama_pendaftar = $this->request->getVar('nama_pendaftar');
-            $testimoni = $this->request->getVar('testimoni');
+            $nama_pejabat = $this->request->getVar('nama_pejabat');
+            $jabatan = $this->request->getVar('jabatan');
 
-            $file = $this->request->getFile('gambar_pendaftar');
-            $file->move('img/testimonial');
+            $file = $this->request->getFile('gambar_pejabat');
+            $file->move('img/pejabat');
             $nama_file = $file->getName();
             $leng = strlen($nama_file);
 
           if($leng <= 20){
             $data = array(
-              'nama_pendaftar' => $nama_pendaftar,	
-              'testimoni' => $testimoni,
-              'gambar_pendaftar' => $nama_file,	
+              'nama_pejabat' => $nama_pejabat,	
+              'jabatan' => $jabatan,
+              'gambar_pejabat' => $nama_file,	
               'user_id' => $user_id
             );
-            $model = new TestimoniModel();
+            $model = new PejabatModel();
             if ($model->insert($data)){
               return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di tambah']);
             } else {
@@ -85,41 +117,41 @@ class Testimonial extends BaseController
 
     public function edit($id)
     {
-        $model = new TestimoniModel();
+        $model = new PejabatModel();
         $data1 = $model->find($id);
         $session = session();
         $datas = $session->get();
         $data = [
-          'title' => 'BLK - Testimonial',
-          'content_title' => 'Testimonial Pendaftar',
+          'title' => 'BLK - pejabat',
+          'content_title' => 'Pejabat',
           'name' => $datas['name'],
           'id_user' => $datas['id_user'],
           'data' => $data1,
         ];
-        return view('pages/testimonial/edit',$data);
+        return view('pages/pejabat/edit',$data);
     }
 
     public function update()
     {
-          $model = new TestimoniModel();
+          $model = new PejabatModel();
           $validation = \Config\Services::validation();
           $validation->setRules([
-            'nama_pendaftar' => [
+            'nama_pejabat' => [
                 'rules' => 'required',
                 'errors' => [
-                      'required' => 'Nama Pendaftar tidak boleh kosong !'
+                      'required' => 'Nama Pejabat tidak boleh kosong !'
                 ],
             ],
-            'testimoni' => [
+            'jabatan' => [
               'rules' => 'required',
               'errors' => [
-                    'required' => 'testimoni tidak boleh kosong !'
+                    'required' => 'jabatan tidak boleh kosong !'
               ],
              ],
-            'gambar_pendaftar' => [
-              'rules' => 'max_size[gambar_pendaftar,1024]|is_image[gambar_pendaftar]|mime_in[gambar_pendaftar,image/jpg,image/jpeg,image/jpeg,image/png]',
+            'gambar_pejabat' => [
+              'rules' => 'max_size[gambar_pejabat,1024]|is_image[gambar_pejabat]|mime_in[gambar_pejabat,image/jpg,image/jpeg,image/jpeg,image/png]',
               'errors' => [
-                  // 'uploaded' => 'Gambar Pendaftar tidak boleh kosong',
+                  // 'uploaded' => 'Gambar pejabat tidak boleh kosong',
                   'max_size' => 'Maaf ukuran gambar terlalu besar !',
                   'is_image' => 'Maaf yang anda pilih bukan gambar !',
                   'mine_in'  => 'Maaf yang anda pilih bukan gambar !',
@@ -132,27 +164,27 @@ class Testimonial extends BaseController
           if ($validation->withRequest($this->request)->run()) {
             $id = $this->request->getVar('id');
             $user_id = $this->request->getVar('user_id');
-            $nama_pendaftar = $this->request->getVar('nama_pendaftar');
-            $testimoni = $this->request->getVar('testimoni');
+            $nama_pejabat = $this->request->getVar('nama_pejabat');
+            $jabatan = $this->request->getVar('jabatan');
 
-            $file = $this->request->getFile('gambar_pendaftar');
+            $file = $this->request->getFile('gambar_pejabat');
             $nama_file = $file->getName();
     
             if($file->getError() == 4){
               $nama_file = $this->request->getVar('old_gambar');
           }else{
-              $file->move('img/testimonial');
+              $file->move('img/pejabat');
               $nama_file = $file->getName();
-               unlink('img/testimonial/' . $this->request->getVar('old_gambar'));
+               unlink('img/pejabat/' . $this->request->getVar('old_gambar'));
            }
     
            $data = array(
-              'nama_pendaftar' => $nama_pendaftar,	
-              'testimoni' => $testimoni,
-              'gambar_pendaftar' => $nama_file,	
+              'nama_pejabat' => $nama_pejabat,	
+              'jabatan' => $jabatan,
+              'gambar_pejabat' => $nama_file,	
               'user_id' => $user_id
            );
-          $model = new TestimoniModel();
+          $model = new PejabatModel();
           $id = $this->request->getVar('id');
             if ($model->update($id,$data)) {
               return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di update']);
@@ -167,13 +199,13 @@ class Testimonial extends BaseController
 
     public function delete()
     {
-      $model = new TestimoniModel();
+      $model = new PejabatModel();
        $ids = $this->request->getVar('ids');
 
      foreach ($ids as $key => $id) {
          $data = $model->where('id', $id)->first();
          $model->where('id',$id)->delete();
-         unlink('img/testimonial/' . $data['gambar_pendaftar']);
+         unlink('img/pejabat/' . $data['gambar_pejabat']);
      }
 
      return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di hapus']);

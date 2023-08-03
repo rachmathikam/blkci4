@@ -48,19 +48,41 @@ $routes->get('/icon', 'Icon::index',['filter' => 'authGuard']);
 
 // visi misi
 $routes->get('/visi_misi', 'VisiMisi::index',['filter' => 'authGuard']);
+$routes->post('/visi_store', 'VisiMisi::storeVisi',['filter' => 'authGuard']);
+$routes->post('/misi_store', 'VisiMisi::storeMisi',['filter' => 'authGuard']);
 $routes->post('/visi_misi_edit', 'VisiMisi::edit',['filter' => 'authGuard']);
+$routes->post('/visi_misi_delete', 'VisiMisi::delete',['filter' => 'authGuard']);
 
 //kerjasama
 $routes->get('/kerja_sama', 'KerjaSama::index',['filter' => 'authGuard']);
+$routes->post('/kerja_sama_store', 'KerjaSama::store',['filter' => 'authGuard']);
+$routes->get('/kerja_sama_edit/(:num)', 'KerjaSama::edit/$1',['filter' => 'authGuard']);
+$routes->post('/kerja_sama_update', 'KerjaSama::update',['filter' => 'authGuard']);
+$routes->post('/kerja_sama_delete', 'KerjaSama::delete',['filter' => 'authGuard']);
 
 //testimonial
 $routes->get('/testimonial', 'Testimonial::index',['filter' => 'authGuard']);
+$routes->post('/testimonial_store', 'Testimonial::store',['filter' => 'authGuard']);
+$routes->get('/testimonial_edit/(:num)', 'Testimonial::edit/$1',['filter' => 'authGuard']);
+$routes->post('/testimonial_update', 'Testimonial::update',['filter' => 'authGuard']);
+$routes->post('/testimonial_delete', 'Testimonial::delete',['filter' => 'authGuard']);
 
 //kegiatanpelatihan
 $routes->get('/kegiatan_pelatihan', 'KegiatanPelatihan::index',['filter' => 'authGuard']);
+$routes->post('/kegiatan_pelatihan_store', 'KegiatanPelatihan::store',['filter' => 'authGuard']);
+$routes->get('/kegiatan_pelatihan_edit/(:num)', 'KegiatanPelatihan::edit/$1',['filter' => 'authGuard']);
+$routes->post('/kegiatan_pelatihan_update', 'KegiatanPelatihan::update',['filter' => 'authGuard']);
+$routes->post('/kegiatan_pelatihan_delete', 'KegiatanPelatihan::delete',['filter' => 'authGuard']);
 
 //berita
 $routes->get('/berita', 'Berita::index',['filter' => 'authGuard']);
+
+//pejabat
+$routes->get('/pejabat', 'Pejabat::index',['filter' => 'authGuard']);
+$routes->post('/pejabat_store', 'Pejabat::store',['filter' => 'authGuard']);
+$routes->get('/pejabat_edit/(:num)', 'Pejabat::edit/$1',['filter' => 'authGuard']);
+$routes->post('/pejabat_update', 'Pejabat::update',['filter' => 'authGuard']);
+$routes->post('/pejabat_delete', 'Pejabat::delete',['filter' => 'authGuard']);
 
 
 

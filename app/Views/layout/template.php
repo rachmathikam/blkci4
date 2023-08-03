@@ -89,6 +89,7 @@
 	<script src="../assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
 	<!-- toattr -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<!-- Datatables -->
 	<script src="../assets/js/plugin/datatables/datatables.min.js"></script>
