@@ -1,21 +1,31 @@
 <?= $this->extend('layout/template'); ?>
 
 <?= $this->section('content'); ?>
-
 <style>
-    input[type=number] {
-  -moz-appearance: textfield;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+    .editInput {
+        display: none;
+        height: 35px;
+        border-radius: 5px;
+        border: 1px;
+        background: #c6c2cc;
+    }
+    .di_terima{
+        background-color:#28a745; 
+    }
+    .pending{
+        background-color:#FFC107;
+    }
+    option{
+        background-color:white;
+        color:black;
+    }
+    .status{
+        height:35px; 
+        border-radius:4px; 
+        color:white; 
+        width:100px;
+    }
 
-#toast-container > .customer-info {            
-
-  background-color: dodgerblue;
-}
 </style>
 <div class="container">
     <div class="col">
@@ -45,7 +55,8 @@ input::-webkit-inner-spin-button {
         <div class="container">
             <div class="card">
                 <div class="card-body">
-                    <button class="btn btn-primary btn-sm float-right"  data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Icon</button>
+                    <button class="btn btn-primary btn-sm float-right" data-toggle="modal"
+                        data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Kerjasama Mitra</button>
                     <button class="btn btn-danger btn-sm float-right mr-1 deleteData"><i class="fas fa-trash"></i> Hapus Terpilih</button>
                     <div class="card-body mt-5">
                         <div class="table-responsive">
@@ -53,24 +64,48 @@ input::-webkit-inner-spin-button {
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="select_all"></th>
-                                        <th>Nama Icon</th>
-                                        <th>Icon</th>
-                                        <th>Unicode</th>
+                                        <th>Nama Mitra</th>
+                                        <th>Bidang Usaha</th>
+                                        <th>Email</th>
+                                        <th>Alamat</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="add_new">
-                                    <?php foreach ($icon as $value): ?>
-                                    <tr id="data<?= $value['id']; ?>">
-                                        <td><input type="checkbox"  class="checkbox_ids" name="ids" value="<?= $value['id']; ?>"></td>
+                                <?php foreach($data as $val): ?>
+                                    <tr id="data<?= $val['id']?>">
+                                        <td><input type="checkbox" class="checkbox_ids" name="ids" value="<?= $val['id']?>"></td>
                                         <td>
-                                            <span class="editSpan icon_name"><?= $value['icon_name']; ?></span>
-                                            <input type="text" name="icon_name" class="editInput icon_name" style="display:none;" value="<?= $value['icon_name']; ?>"> 
+                                          <span class="editSpan nama_mitra"><?= $val['nama_mitra'] ?></span>
+                                            <input type="text" class="editInput nama_mitra" name="nama_mitra" value="<?= $val['nama_mitra'] ?>">
                                         </td>
-                                        <td><i class="<?= $value['icon_name']; ?>"></i></td>
                                         <td>
-                                            <span class="editSpan unicode"><?= $value['unicode']; ?></span>
-                                            <input type="text" name="unicode" class="editInput unicode" style="display:none;" value="<?= $value['unicode']; ?>"> 
+                                            <span class="editSpan bidang_usaha"><?= $val['bidang_usaha'] ?></span>
+                                            <input type="text" class="editInput bidang_usaha" name="bidang_usaha" value="<?= $val['bidang_usaha'] ?>">
+                                        </td>
+                                        <td>    
+                                            <span class="editSpan email"><?= $val['email'] ?></span>
+                                            <input type="text" class="editInput email" name="email" value="<?= $val['email'] ?>">
+                                        </td>
+                                        <td>
+                                            <span class="editSpan alamat"><?= $val['alamat'] ?></span>
+                                            <input type="text" class="editInput alamat" name="alamat" value="<?= $val['alamat'] ?>">
+                                         </td>
+                                        <td id="myTd" class="statusCell">
+                                            <?php $selected ='';?>
+                                            <?php $selected2 ='';?>
+                                            <select class="text-center status" id="status<?php echo $val['id']?>" name="status<?php echo $val['id']?>" onchange="cobaSaja('<?php echo $val['id']?>')" style="background-color:<?= $val['color']?>">
+                                            <?php if($val['status'] == 'di_terima') {?>
+                                                <?php $selected ='selected';?>
+                                                <?php  }?>
+                                                <?php if($val['status'] == 'pending') {?>
+                                                <?php $selected2 ='selected';?>
+                                                <?php  }?>
+                                                <option <?php echo $selected ?> value="di_terima">Di terima</option>
+                                                <option <?php echo $selected2 ?> value="pending">Pending</option>
+                                              
+                                            </select>
                                         </td>
                                         <td>
                                             <button class="btn text-warning  edit_inline"><i class="fa fa-edit"></i></button>
@@ -93,31 +128,36 @@ input::-webkit-inner-spin-button {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Partner</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="form_icon" class="row">
-                <input type="hidden" class="txt_csrfname" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
-                <input type="hidden" class="user_id" name="user_id" value="<?= $id_user ?>" />
-                <input type="hidden" name="id"  value="<?php if(!empty($data_kontak['id'])){ echo $data_kontak['id']; }?>" />
-                    <div class="form-group col-md-12">
-                        <label for="">Nama Icon</label>
-                        <input type="text" class="form-control" name="icon_name">
-                    </div>
-                    <div class="form-group col-sm-12">
-                        <label for="">Unicode</label>
-                        <input type="text" class="form-control" name="unicode">
-                    </div>
-                
+            <form  class="row" enctype='multipart/form-data' id="modal_form">
+                <div class="form-group col-md-6">
+                    <label for="kategori">Nama Mitra</label>
+                    <input type="hidden" name="user_id" value="<?php echo $id_user ?>">
+                    <input type="text" class="form-control" id="nama_mitra" name="nama_mitra">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="kategori">Bidang Usaha</label>
+                    <input type="text" class="form-control"ïd="bidang_usaha" name="bidang_usaha">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="kategori">Email</label>
+                    <input type="text" class="form-control" id="email" name="email">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="kategori">Alamat</label>
+                    <input type="text" class="form-control" id="alamat" name="alamat">
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="submit" class="btn btn-primary add_user">Simpan</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+			</form>
             </div>
-            </form>
         </div>
     </div>
 </div>
@@ -126,7 +166,7 @@ input::-webkit-inner-spin-button {
     <div class="row">
         <div class="col">
             <br><br><br>
-           
+
         </div>
     </div>
 </div>
@@ -135,31 +175,45 @@ input::-webkit-inner-spin-button {
 <?= $this->endSection(); ?>
 
 <?= $this->section('js'); ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+    crossorigin="anonymous"></script>
+    <script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <!-- jQuery Validation plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>    
-<script>  
-    var url = '<?= base_url(); ?>';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script>
+    var url = '<?php echo base_url(); ?>';
+
     $(document).ready(function() {
         //form submit icon
-        $('#form_icon').validate({
+        $('#modal_form').validate({
         rules: {
-                icon_name: {
+                nama_mitra: {
                 required: true,
                 },
-                unicode: {
+                bidang_usaha: {
+                required: true,
+                },
+                email: {
+                required: true,
+                },
+                alamat: {
                 required: true,
                 }
             },
             messages: {
-                icon_name: {
-                required: "Masukkan Nomer HP anda."
+                nama_mitra: {
+                required: "Nama Mitra harus di isi !."
                 },
-                unicode: {
-                required: "Masukkan unicode anda !"
+                bidang_usaha: {
+                required: "Bidang Usaha harus di isi !"
+                },
+                email: {
+                required: "Email harus di isi !"
+                },
+                alamat: {
+                required: "Alamat harus di isi !"
                 }
             },
             errorElement: "div",
@@ -177,9 +231,9 @@ input::-webkit-inner-spin-button {
                 var data = $('#create').val();
                 if (data != '') {
                     $.ajax({
-                        url: url+'icon_store', 
+                        url: url+'kerjasama_store', 
                         type: 'POST',
-                        data: $('#form_icon').serialize(),
+                        data: $('#modal_form').serialize(),
                         dataType: 'json',
                         success: function(response) {
                             if (response.status === 'success') {
@@ -190,7 +244,7 @@ input::-webkit-inner-spin-button {
                                 }); 
                                 
                                 setTimeout(function(){
-                                    location = url +'icon';
+                                    location = url +'kerjasama';
                                 },1500)
                                 
                             } else if (response.status === 'error') {
@@ -208,14 +262,21 @@ input::-webkit-inner-spin-button {
             }
         });
 
-        $('#unicode').on('click', function() {
-            $('#unicode').removeClass('is-valid is-invalid');
+        $('#nama_mitra').on('click', function() {
+            $('#nama_mitra').removeClass('is-valid is-invalid');
         });
-        $('#icon_name').on('click', function() {
-            $('#icon_name').removeClass('is-valid is-invalid');
+        $('#bidang_usaha').on('click', function() {
+            $('#bidang_usaha').removeClass('is-valid is-invalid');
+        });
+
+        $('#email').on('click', function() {
+            $('#email').removeClass('is-valid is-invalid');
+        });
+
+        $('#alamat').on('click', function() {
+            $('#alamat').removeClass('is-valid is-invalid');
         });
     });
-
 
     $("#add_new").on('click','.edit_inline',function(){
             var  btn = $(this);
@@ -243,44 +304,61 @@ input::-webkit-inner-spin-button {
     $("#add_new").on("click", '.btnSave',function(e) {
         e.preventDefault();
         var trObj = $(this).closest("tr");
+        
             var ID = $(this).closest("tr").attr('id');
+        
             var inputData = $(this).closest("tr").find(".editInput").serialize();
             
 
         $.ajax({
             type: "POST",
-            url : url+"icon_edit",
+            url : url+"kerjasama_update",
             dataType: "json",
             data:'action=edit&id='+ID+'&'+inputData+'&'+'user_id=<?php echo $id_user ?>',
             success:function(response){
             if(response.status == 'success'){
                 toastr.success(response.message);
-                trObj.find(".editSpan.icon_name").text(response.data.icon_name);
-                trObj.find(".editSpan.unicode").text(response.data.unicode);
+                trObj.find(".editSpan.nama_mitra").text(response.data.nama_mitra);
+                trObj.find(".editSpan.bidang_usaha").text(response.data.bidang_usaha);
+                trObj.find(".editSpan.email").text(response.data.email);
+                trObj.find(".editSpan.alamat").text(response.data.alamat);
                 
 
-                trObj.find(".editInput.icon_name").val(response.data.icon_name);
-                trObj.find(".editInput.unicode").val(response.data.unicode);
+                trObj.find(".editSpan.nama_mitra").val(response.data.nama_mitra);
+                trObj.find(".editSpan.bidang_usaha").val(response.data.bidang_usaha);
+                trObj.find(".editSpan.email").val(response.data.email);
+                trObj.find(".editSpan.alamat").val(response.data.alamat);
 
                 trObj.find(".editInput").hide();
                 trObj.find(".editSpan").show();
                 trObj.find(".btnSave").hide();
                 trObj.find(".editCancel").hide();
                 trObj.find(".edit_inline").show();
-                setTimeout(function(){
-                        location = url+'icon';
-                    },1500)
+
+                }else{
+                    console.log(response.errors);
+                   if(response.errors.nama_mitra){
+                       toastr.error(response.errors.nama_mitra);
+                   }else if(response.errors.bidang_usaha){
+                    toastr.error(response.errors.bidang_usaha);
+                   }else if(response.errors.email){
+                    toastr.error(response.errors.email);
+                   }else if(response.errors.alamat){
+                    toastr.error(response.errors.alamat);
+                   }
+                 
                 }
             }
         });
     });
 
-$("#select_all").click(function() {
+
+ $("#select_all").click(function() {
     $('.checkbox_ids').prop('checked', $(this).prop('checked'));
 });
 
-$(document).on('click','.deleteData',function() {
-var all_ids = [];
+ $(document).on('click','.deleteData',function() {
+    var all_ids = [];
 $('input:checkbox[name=ids]:checked').each(function() {
     all_ids.push($(this).val());
 });
@@ -304,7 +382,7 @@ swalWithBootstrapButtons.fire({
     if (result.value) {
         if (result.isConfirmed) {
           $.ajax({
-              url: url+"icon_delete",
+              url: url+"kerjasama_delete",
               type: "POST",
               data: {
                   ids: all_ids,
@@ -315,9 +393,6 @@ swalWithBootstrapButtons.fire({
                     var datas = $('#data' + val);
                      datas.remove();
                   })
-                  setTimeout(function () {
-                        location = url+'icon';
-                    }, 1500)
               }
           });
         }
@@ -331,6 +406,26 @@ swalWithBootstrapButtons.fire({
         )
     }
 });
-});  
+});
+
+function cobaSaja(isi){
+        var inputData = $('#status'+isi).val();
+    
+        $.ajax({
+            type: "POST",
+            url : url+"status_edit",
+            dataType: "json",
+            data:'statusAksi=edit&id='+isi+'&'+'status='+inputData+'&'+'user_id=<?php echo $id_user ?>',
+            success:function(response){
+            if(response.status == 'success'){
+                toastr.success(response.message);
+                    $("#status"+isi).css({ 'background-color' : '', 'opacity' : '' });
+                    $('#status'+isi).attr('class',"text-center status "+inputData);
+                
+               }
+            }
+        });    
+    }
+
 </script>
 <?= $this->endSection(); ?>

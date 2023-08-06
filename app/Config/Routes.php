@@ -40,8 +40,11 @@ $routes->get('/dashboard', 'Dashboard::index',['filter' => 'authGuard']);
 $routes->post('/hero_contact', 'HeroContent::storeKontak',['filter' => 'authGuard']);
 $routes->post('/hero_profile', 'HeroContent::storeHeroContent',['filter' => 'authGuard']);
 $routes->post('/hero_media', 'HeroContent::storeSocialMedia',['filter' => 'authGuard']);
-
+$routes->post('/hero_media', 'HeroContent::storeSocialMedia',['filter' => 'authGuard']);
 $routes->get('/hero_content', 'HeroContent::index',['filter' => 'authGuard']);
+$routes->post('/hero_media_delete', 'HeroContent::deleteSocialMedia',['filter' => 'authGuard']);
+$routes->post('/hero_media_edit', 'HeroContent::editSocialMedia',['filter' => 'authGuard']);
+
 
 //icon
 $routes->get('/icon', 'Icon::index',['filter' => 'authGuard']);
@@ -55,12 +58,20 @@ $routes->post('/misi_store', 'VisiMisi::storeMisi',['filter' => 'authGuard']);
 $routes->post('/visi_misi_edit', 'VisiMisi::edit',['filter' => 'authGuard']);
 $routes->post('/visi_misi_delete', 'VisiMisi::delete',['filter' => 'authGuard']);
 
+//partner
+$routes->get('/partner', 'Partner::index',['filter' => 'authGuard']);
+$routes->post('/partner_store', 'Partner::store',['filter' => 'authGuard']);
+$routes->get('/partner_edit/(:num)', 'Partner::edit/$1',['filter' => 'authGuard']);
+$routes->post('/partner_update', 'Partner::update',['filter' => 'authGuard']);
+$routes->post('/partner_delete', 'Partner::delete',['filter' => 'authGuard']);
+
 //kerjasama
-$routes->get('/kerja_sama', 'KerjaSama::index',['filter' => 'authGuard']);
-$routes->post('/kerja_sama_store', 'KerjaSama::store',['filter' => 'authGuard']);
-$routes->get('/kerja_sama_edit/(:num)', 'KerjaSama::edit/$1',['filter' => 'authGuard']);
-$routes->post('/kerja_sama_update', 'KerjaSama::update',['filter' => 'authGuard']);
-$routes->post('/kerja_sama_delete', 'KerjaSama::delete',['filter' => 'authGuard']);
+$routes->get('/kerjasama', 'KerjasamaMitra::index',['filter' => 'authGuard']);
+$routes->post('/kerjasama_store', 'KerjasamaMitra::store',['filter' => 'authGuard']);
+$routes->get('/kerjasama_edit/(:num)', 'KerjasamaMitra::edit/$1',['filter' => 'authGuard']);
+$routes->post('/kerjasama_update', 'KerjasamaMitra::update',['filter' => 'authGuard']);
+$routes->post('/kerjasama_delete', 'KerjasamaMitra::delete',['filter' => 'authGuard']);
+$routes->post('/status_edit', 'KerjasamaMitra::statusUpdate',['filter' => 'authGuard']);
 
 //testimonial
 $routes->get('/testimonial', 'Testimonial::index',['filter' => 'authGuard']);
@@ -78,6 +89,14 @@ $routes->post('/kegiatan_pelatihan_delete', 'KegiatanPelatihan::delete',['filter
 
 //berita
 $routes->get('/berita', 'Berita::index',['filter' => 'authGuard']);
+$routes->post('/berita_store', 'Berita::store',['filter' => 'authGuard']);
+$routes->post('/berita_delete', 'Berita::delete',['filter' => 'authGuard']);
+$routes->get('/berita_edit/(:num)', 'Berita::edit/$1',['filter' => 'authGuard']);
+$routes->post('/berita_update', 'Berita::update',['filter' => 'authGuard']);
+$routes->post('/berita_upload', 'Berita::uploadGambar',['filter' => 'authGuard']);
+$routes->post('/berita_gambar_delete', 'Berita::deleteGambar',['filter' => 'authGuard']);
+$routes->get('/berita_create', 'Berita::create',['filter' => 'authGuard']);
+
 
 //pejabat
 $routes->get('/pejabat', 'Pejabat::index',['filter' => 'authGuard']);

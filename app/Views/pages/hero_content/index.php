@@ -12,9 +12,9 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-#toast-container > .customer-info {            
+.editInput {            
 
-  background-color: dodgerblue;
+  display: none;
 }
 </style>
 <div class="container">
@@ -181,7 +181,7 @@ input::-webkit-inner-spin-button {
                         <div class="card-body">
                             <h3>Social Media</h3>
                             <button class="btn btn-primary btn-sm float-right"  data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Social Media</button>
-                            <button class="btn btn-danger btn-sm float-right mr-1"><i class="fas fa-trash"></i> Tambah Social Media</button>
+                            <button class="btn btn-danger btn-sm float-right mr-1 deleteData"><i class="fas fa-trash"></i> Hapus Terpilih</button>
                             <div class="card-body mt-5">
                                 <div class="table-responsive">
                                     <table id="basic-datatables" class="display table table-hover">
@@ -198,9 +198,27 @@ input::-webkit-inner-spin-button {
                                         <?php foreach($result->getResult() as $value): ?>
                                              <tr id="data<?= $value->id; ?>">
                                                 <td><input type="checkbox"  class="checkbox_ids" name="ids" value="<?= $value->id; ?>"></td>
-                                                <td><?= $value->social_media_name; ?></td>
-                                                <td><i class="<?= $value->icon_name; ?>"></i></td>
-                                                <td><?= $value->link; ?></td>
+                                                <td>
+                                                    <span class="editSpan social_media_name"><?= $value->social_media_name ?></span>
+                                                    <input type="text" name="social_media_name" class="editInput social_media_name" value="<?= $value->social_media_name ?>">
+                                                </td>
+                                                <td>
+                                                    <span class="editSpan icon_id"><i class="<?= $value->icon_name; ?>"></i></span>
+                                                    <select name="icon_id" id="" class="editInput icon_id">
+                                                        <?php foreach($data_Icon as $icon){ ?>
+                                                            <?php $selected =''; ?>
+                                                            <?php if($value->icon_id == $icon->id){
+                                                                    $selected = 'selected';
+                                                            }?> 
+                                                                <option <?= $selected ?> value="<?= $icon->id ?>"><?= $icon->icon_name ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <span class="editSpan link"><?= $value->link; ?></span>
+                                                    <input type="text" name="link" class="editInput link" value="<?= $value->link; ?>">
+                                                </td>
+                                            
                                                 <td>
                                                      <button class="btn text-warning btn-sm edit_inline"><i class="fa fa-edit"></i></button>
 													<button class="btn text-primary btn-sm btnSave" style="display:none;"><i class="fa fa-check"></i></button>
@@ -224,34 +242,37 @@ input::-webkit-inner-spin-button {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Tamabah Social Media</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form action="" class="row" method="POST">
+        <form id="form_social_media" class="row">
             <div class="form-group col-md-6">
                 <label for="">Pilih Icon</label>
-                <select name="" id="" class="form-control">
-                    <option value=""></option>
-                    <option value=""></option>
+                <select name="icon_id" id="icon_id" class="form-control">
+                    <option selected disabled >-- Pilih Icon --</option>
+                    <?php foreach($data_Icon as $x){ ?>
+                    <option value="<?= $x->id?>"><?= $x->icon_name?></option>
+                    <?php } ?>
                 </select>
             </div>
             <div class="form-group col-md-6">
                 <label for="">Nama Social Media</label>
-                <input type="text" class="form-control" name="nama_social_media">
+                <input type="text" class="form-control" id="nama_social_media" name="nama_social_media">
+                <input type="hidden" class="user_id" name="user_id" value="<?= $id_user ?>" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="">Link Social Media</label>
-                <input type="text" class="form-control" name="link">
+                <input type="text" class="form-control" name="link" id="link">
             </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+    </form>
     </div>
   </div>
 </div>
@@ -275,20 +296,15 @@ input::-webkit-inner-spin-button {
 <script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
     <!-- jQuery Validation plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <!-- sweetAlert -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
         
     <script>  
 
 
+var url = '<?= base_url(); ?>';
 $(document).ready(function() {
-    // $('.container').preloader({
-    //     text:'loading',
-    //     percent:'100',
-    //     duration:'1000',
-    //     zIndex:'200',
-    //     setRelative:false
-
-    // });
     $.validator.addMethod("phoneID", function(phone_number, element) {
       phone_number = phone_number.replace(/\s+/g, ''); 
       return this.optional(element) || phone_number.match(/^\d{11}$/);
@@ -350,7 +366,6 @@ $(document).ready(function() {
         $(element).removeClass("is-invalid").addClass("is-valid");
       },
       submitHandler: function(form) {
-        var url = '<?= base_url(); ?>';
         var data = $('#create').val();
         if (data != '') {
             $.ajax({
@@ -394,8 +409,8 @@ $(document).ready(function() {
             $('#lokasi').removeClass('is-valid is-invalid');
         });
 
-        $('select').on('change', function() {
-            $('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
+        $('#contentToggle').on('change', function() {
+            $('#contentToggle').removeClass('is-valid is-invalid');
         });
   });
 
@@ -460,7 +475,6 @@ $(document).ready(function() {
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        
                         if (response.status === 'success') {
                             swal(response.message, {
                                 icon : "success",
@@ -507,20 +521,106 @@ $(document).ready(function() {
         $('#deskripsi').on('click', function() {
             $('#deskripsi').removeClass('is-valid is-invalid');
         });
-
-
-        $('select').on('change', function() {
-            $('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
+        $('#contentToggle').on('change', function() {
+            $('#contentToggle').removeClass('is-valid is-invalid');
         });
-
-  
     });
 
-  
+ //social media form
+ $(document).ready(function() {
+  $('#form_social_media').validate({
+      rules: {
+        icon_id: {
+          required: true,
+        },
+        nama_social_media: {
+          required: true,
+        },
+        link: {
+          required: true,
+        },
+      },
+      messages: {
+        icon_id: {
+          required: "Pilih Icon.",
 
-  
-  
-  $("#add_new").on('click','.edit_inline',function(){
+        },
+        nama_social_media: {
+          required: "Masukkan nama social media !",
+        
+        },
+        link: {
+          required: "Masukkan link social media !"
+        },
+      },
+      errorElement: "div",
+      errorPlacement: function(error, element) {
+        error.addClass("invalid-feedback");
+        error.insertAfter(element);
+      },
+      highlight: function(element, errorClass, validClass) {
+        $(element).addClass("is-invalid").removeClass("is-valid");
+      },
+      unhighlight: function(element, errorClass, validClass) {
+        $(element).removeClass("is-invalid").addClass("is-valid");
+      },
+      submitHandler: function(form) {
+        var url = '<?= base_url(); ?>';
+        var formData = new FormData(form);
+            $.ajax({
+                    url:url+'hero_media/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            swal(response.message, {
+                                icon : "success",
+                                buttons:false,
+                                timer: 1500,
+                            }); 
+                            toastr.success('behasil menambahkan data');
+                            setTimeout(function(){
+                                location = url +'hero_content';
+                            },1500)
+                            
+                        } else if (response.status === 'error') {
+                            $.notify({
+                                // options
+                                icon: 'flaticon-lock-1',
+                                title: 'Error',
+                                message: response.errors.background,
+                                target: '_blank'
+                            });
+                            $(".background").addClass('is-invalid');
+                            var text = document.querySelector(".invalid-feedback");
+                            text.textContent  = response.errors.background;
+                            console.log(text.textContent);
+                        } else if (response.status === 'error') {
+                            toastr.error('Validation Error:', response.errors.background);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('AJAX request failed: ' + error);
+                       
+                    }
+                });
+             }
+    });
+        $('#nama_social_media').on('click', function() {
+            $('#nama_social_media').removeClass('is-valid is-invalid');
+        });
+        $('#link').on('click', function() {
+            $('#link').removeClass('is-valid is-invalid');
+        });
+        $('#icon_id').on('change', function() {
+            $('#icon_id').removeClass('is-valid is-invalid');
+        });
+    });
+ 
+ 
+    $("#add_new").on('click','.edit_inline',function(){
     	var  btn = $(this);
       btn.closest("tr").find(".edit_inline").hide();
 
@@ -545,40 +645,94 @@ $("#add_new").on('click','.editCancel', function(e){
 
 $("#add_new").on("click", '.btnSave',function(e) {
     e.preventDefault();
-	var trObj = $(this).closest("tr");
+	    var trObj = $(this).closest("tr");
         var ID = $(this).closest("tr").attr('id');
         var inputData = $(this).closest("tr").find(".editInput").serialize();
-		
 
     $.ajax({
         type: "POST",
-        url : "http://localhost/blk/setting_profile/fetch.php",
+        url : url+"hero_media_edit",
         dataType: "json",
         data:'action=edit&id='+ID+'&'+inputData+'&'+'user_id=<?php echo $id_user ?>',
         success:function(response){
-          if(response.status == 200){
+          if(response.status == 'success'){
             toastr.success(response.message);
             trObj.find(".editSpan.social_media_name").text(response.data.social_media_name);
             trObj.find(".editSpan.icon_id").text(response.data.icon_id);
 			trObj.find(".editSpan.link").text(response.data.link);
-
             trObj.find(".editInput.social_media_name").val(response.data.social_media_name);
             trObj.find(".editInput.icon_id").val(response.data.icon_id);
             trObj.find(".editInput.link").val(response.data.link);
-
             trObj.find(".editInput").hide();
             trObj.find(".editSpan").show();
             trObj.find(".btnSave").hide();
             trObj.find(".editCancel").hide();
             trObj.find(".edit_inline").show();
 			setTimeout(function(){
-					location = 'http://localhost/blk/setting_profile/setting.php';
-				},1500)
+					location = url+'hero_content';
+			},1500)
           }
         }
     });
-
 });
+
+$("#select_all").click(function() {
+    $('.checkbox_ids').prop('checked', $(this).prop('checked'));
+});
+
+$(document).on('click','.deleteData',function() {
+var all_ids = [];
+$('input:checkbox[name=ids]:checked').each(function() {
+    all_ids.push($(this).val());
+});
+
+const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: true
+});
+swalWithBootstrapButtons.fire({
+    title: 'Are you sure?',
+    text: "Do you want to delete ?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, cancel!',
+    reverseButtons: true
+}).then((result) => {
+    if (result.value) {
+        if (result.isConfirmed) {
+          $.ajax({
+              url: url+"hero_media_delete",
+              type: "POST",
+              data: {
+                  ids: all_ids,
+              },
+              success: function(response) {
+                toastr.success('behasil menghapus data');
+                $.each(all_ids, function(key, val) {
+                    var datas = $('#data' + val);
+                     datas.remove();
+                  })
+                  setTimeout(function () {
+                        location = url+'hero_content';
+                    }, 1500)
+              }
+          });
+        }
+    } else if (
+        result.dismiss === Swal.DismissReason.cancel
+    ) {
+        swal.fire(
+            'Cancelled',
+            'Data is not deleted',
+            'error'
+        )
+    }
+});
+});  
   
   </script>
 <?= $this->endSection(); ?>

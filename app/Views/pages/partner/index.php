@@ -29,9 +29,8 @@
         <div class="container">
             <div class="card">
                 <div class="card-body">
-                    <h3>Icon</h3>
                     <button class="btn btn-primary btn-sm float-right" data-toggle="modal"
-                        data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Kerjasama</button>
+                        data-target="#exampleModal"><i class="fas fa-plus"></i> Tambah Partner</button>
                     <button class="btn btn-danger btn-sm float-right mr-1 deleteData"><i class="fas fa-trash"></i> Hapus Terpilih</button>
                     <div class="card-body mt-5">
                         <div class="table-responsive">
@@ -49,9 +48,9 @@
                                     <tr id="data">
                                         <td><input type="checkbox" class="checkbox_ids" name="ids" value="<?= $val->id?>"></td>
                                         <td><?= $val->nama_perusahaan?></td>
-                                        <td><img src="img/kerjasama/<?= $val->logo_perusahaan?>" width="100"></td>
+                                        <td><img src="img/partner/<?= $val->logo_perusahaan?>" width="100"></td>
                                         <td>
-                                            <a href="<?= base_url()?>kerja_sama_edit/<?= $val->id?>" class="btn text-warning  edit_inline"><i
+                                            <a href="<?= base_url()?>partner_edit/<?= $val->id?>" class="btn text-warning  edit_inline"><i
                                                     class="fa fa-edit"></i></a>
                                         </td>
                                     </tr>
@@ -70,7 +69,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Visi atau Misi</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Partner</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -123,7 +122,7 @@
 
         $.ajax({
             type: 'POST',
-            url: url + 'kerja_sama_store', // URL to the server-side script that handles file upload
+            url: url + 'partner_store', // URL to the server-side script that handles file upload
             data: formData,
             processData: false, // Prevent jQuery from processing the data
             contentType: false, // Prevent jQuery from setting the content type
@@ -132,7 +131,7 @@
                 if(response.status == 'success') {
                     toastr.success(response.message);
                     setTimeout(function(){
-                                location = url +'kerja_sama';
+                                location = url +'partner';
                     },1500)
                 }else if(response.status == 'error_length'){
                     toastr.error(response.errors);
@@ -174,7 +173,7 @@ swalWithBootstrapButtons.fire({
     if (result.value) {
         if (result.isConfirmed) {
           $.ajax({
-              url: url+"kerja_sama_delete",
+              url: url+"partner_delete",
               type: "POST",
               data: {
                   ids: all_ids,
@@ -186,7 +185,7 @@ swalWithBootstrapButtons.fire({
                      datas.remove();
                   })
                   setTimeout(function () {
-                        location = url+'kerja_sama';
+                        location = url+'partner';
                     }, 1500)
               }
           });

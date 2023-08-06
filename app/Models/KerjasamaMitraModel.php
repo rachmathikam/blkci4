@@ -4,16 +4,16 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class KerjasamaModel extends Model
+class KerjasamaMitraModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'kerjasama';
+    protected $table            = 'kerjasama_mitra';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nama_perusahaan','logo_perusahaan','user_id'];
+    protected $allowedFields    = ['nama_mitra','bidang_usaha','email','alamat','status'];
 
     // Dates
     protected $useTimestamps = false;

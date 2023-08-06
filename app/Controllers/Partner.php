@@ -1,30 +1,30 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\KerjaSamaModel;
-class KerjaSama extends BaseController
+use App\Models\PartnerModel;
+class Partner extends BaseController
 {
     public function index()
     {
-      $model = new KerjaSamaModel();
+      $model = new PartnerModel();
       $data_model = $model->get()->getResult();
       $session = session();
       $datas = $session->get();
         $data = [
-        'title' => 'BLK - kerja sama',
-          'content_title' => 'Kerja Sama',
+        'title' => 'BLK - Partner',
+          'content_title' => 'Partner',
           'name' => $datas['name'],
           'id_user' => $datas['id_user'],
           'data' => $data_model
         ];
 
 
-        return view('pages/kerja_sama/index',$data);
+        return view('pages/partner/index',$data);
     }
 
     public function store()
     {
-        $model = new KerjaSamaModel();
+        $model = new PartnerModel();
         $validation = \Config\Services::validation();
         $validation->setRules([
           'nama_perusahaan' => [
@@ -55,7 +55,7 @@ class KerjaSama extends BaseController
            
 
             $file = $this->request->getFile('logo_perusahaan');
-            $file->move('img/kerjasama');
+            $file->move('img/partner');
             $nama_file = $file->getName();
             $leng = strlen($nama_file);
 
@@ -65,7 +65,7 @@ class KerjaSama extends BaseController
               'logo_perusahaan' => $nama_file,	
               'user_id' => $user_id
             );
-            $model = new KerjaSamaModel();
+            $model = new PartnerModel();
             if ($model->insert($data)){
               return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di tambah']);
             } else {
@@ -81,23 +81,23 @@ class KerjaSama extends BaseController
 
     public function edit($id)
     {
-        $model = new KerjaSamaModel();
+        $model = new PartnerModel();
         $data1 = $model->find($id);
         $session = session();
         $datas = $session->get();
         $data = [
-          'title' => 'BLK - kerja sama',
-          'content_title' => 'kerj asama Mitra',
+          'title' => 'BLK - Partner',
+          'content_title' => 'Partner',
           'name' => $datas['name'],
           'id_user' => $datas['id_user'],
           'data' => $data1,
         ];
-        return view('pages/kerja_sama/edit',$data);
+        return view('pages/partner/edit',$data);
     }
 
     public function update()
     {
-          $model = new KerjaSamaModel();
+          $model = new PartnerModel();
           $validation = \Config\Services::validation();
           $validation->setRules([
             'nama_perusahaan' => [
@@ -130,9 +130,9 @@ class KerjaSama extends BaseController
             if($file->getError() == 4){
               $nama_file = $this->request->getVar('old_gambar');
           }else{
-              $file->move('img/kerjasama');
+              $file->move('img/partner');
               $nama_file = $file->getName();
-               unlink('img/kerjasama/' . $this->request->getVar('old_gambar'));
+               unlink('img/partner/' . $this->request->getVar('old_gambar'));
            }
     
            $data = array(
@@ -140,7 +140,7 @@ class KerjaSama extends BaseController
               'logo_perusahaan' => $nama_file,	
               'user_id' => $user_id
            );
-          $model = new KerjaSamaModel();
+          $model = new PartnerModel();
           $id = $this->request->getVar('id');
             if ($model->update($id,$data)) {
               return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di update']);
@@ -155,13 +155,13 @@ class KerjaSama extends BaseController
 
     public function delete()
     {
-      $model = new KerjaSamaModel();
+      $model = new PartnerModel();
        $ids = $this->request->getVar('ids');
 
      foreach ($ids as $key => $id) {
          $data = $model->where('id', $id)->first();
          $model->where('id',$id)->delete();
-         unlink('img/kerjasama/' . $data['logo_perusahaan']);
+         unlink('img/partner/' . $data['logo_perusahaan']);
      }
 
      return $this->response->setJSON(['status' => 'success', 'message' => 'Data berhasil di hapus']);

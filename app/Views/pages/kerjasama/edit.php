@@ -29,7 +29,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Tambah Kerjasana</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Partner</h5>
                     </div>
                     <div class="modal-body">
                             <form  class="row" enctype='multipart/form-data' id="modal_form">
@@ -44,14 +44,14 @@
                                     <label for="">Logo Perusahaan</label>
                                     <br>
                                         <input type="file" name="logo_perusahaan" onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])"> 
-                                        <img src="/img/kerjasama/<?= $data['logo_perusahaan']?>" id="blah" width="100" alt=""  class="mb-5">
+                                        <img src="/img/partner/<?= $data['logo_perusahaan']?>" id="blah" width="100" alt=""  class="mb-5">
                                         <br>
                                         <small style="font-size:12px;">Berikut adalah contoh gambar kegiatan dari blk !</small>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
-                                <a href="<?= base_url('kerja_sama')?>" class="btn btn-secondary" data-dismiss="modal">Kembali</a>
+                                <a href="<?= base_url('partner')?>" class="btn btn-secondary" data-dismiss="modal">Kembali</a>
                             </form>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
 
         $.ajax({
             type: 'POST',
-            url: url + 'kerja_sama_update', 
+            url: url + 'partner_update', 
             data: formData,
             processData: false, 
             contentType: false, 
@@ -105,7 +105,7 @@
                 if(response.status == 'success') {
                     toastr.success(response.message);
                     setTimeout(function(){
-                                location = url +'kerja_sama';
+                                location = url +'partner';
                     },1500)
                 }else if(response.status == 'error_data'){
                     toastr.error(response.errors);

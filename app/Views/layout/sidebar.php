@@ -74,9 +74,15 @@
                 </a>
 			</li>
             <li class="nav-item">
-                <a href="<?= base_url('/kerja_sama')?>">
+                <a href="<?= base_url('/partner')?>">
                     <i class="fas fa-handshake"></i>
-                    <p>Kerjasama Mitra</p>
+                    <p>Partner</p>
+                </a>
+			</li>
+            <li class="nav-item">
+                <a href="<?= base_url('/kerjasama')?>">
+                    <i class="fas fa-handshake"></i>
+                    <p>Kerja Sama Mitra</p>
                 </a>
 			</li>
             <li class="nav-item">
