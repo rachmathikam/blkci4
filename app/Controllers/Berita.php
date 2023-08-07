@@ -196,11 +196,34 @@ class Berita extends BaseController
   {
      $model = new BeritaModel();
      $ids = $this->request->getVar('ids');
-    
-     foreach ($ids as  $id) {
-          $model->delete($id);
 
+     $check = $model->countAll();
+     
+    if($check == 1){
+      $files = glob('img/berita/*');
+      foreach($files as $file){ // iterate files
+        if(is_file($file)) {
+          unlink($file); // delete file
+        }
+      }
+      $model->delete($ids);
+    }else{
+     $data =  $model->orderby('id', 'DESC')->limit(1)->get()->getResult();
+     $array = json_decode(json_encode($data), true);
+     $as = '';
+     foreach ($data as $value){
+       $as = $value->id;
      }
+      foreach ($ids as $id) {
+        if ($id == $as) {
+            continue; 
+        }
+        $data =  $model->find($id);
+        $model->delete($id);
+        unlink('img/berita/' . $data['gambar_berita']);
+    }
+      
+    }
      return $this->response->setJSON(['status' => 'success','message' => 'data berhasil di hapus']);
   }
 

@@ -106,14 +106,13 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous"> -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
 
 $(document).ready(function() {
-    srcs = '';
     $('#summernote').summernote({
                 callbacks: {
                     onImageUpload: function(files) {
@@ -123,10 +122,6 @@ $(document).ready(function() {
                     },
                     onMediaDelete: function(target) {
                         $.delete(target[0].src);
-                        $.update(target[0].src);
-                        $.update(target[0].src);
-                         srcs += target[0].src;
-                         
                     }
                 },
                 height: 200,
@@ -190,7 +185,6 @@ $(document).ready(function() {
     $("#modal_form").submit(function (e) {
         e.preventDefault();
         var formData = new FormData(this);
-        console.log(srcs);
         $.ajax({
             type: 'POST',
             url: url + 'berita_store', 
